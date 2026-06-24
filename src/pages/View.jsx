@@ -33,6 +33,23 @@ function LobbyView({ players, names }) {
     <div className="view-lobby">
       <h1 className="display">Robinson</h1>
       <p className="display-sub">Spelledaren förbereder spelet…</p>
+
+      <div className="rules-card">
+        <h2 className="rules-title">Så funkar det</h2>
+        <ol className="rules-list">
+          <li>Varje omgång lägger ni <strong>2 röster</strong> vardera — båda får ligga på samma namn.</li>
+          <li>De <strong>2 namnen med lägst</strong> röster åker ut.</li>
+          <li>Sista namnet som är kvar <strong>vinner</strong>.</li>
+        </ol>
+
+        <h3 className="rules-subtitle">Vid lika röster på sistaplatsen</h3>
+        <ol className="rules-list rules-list-sub">
+          <li>Namnet med <strong>flest unika röstare</strong> överlever.</li>
+          <li>Fortfarande lika → <strong>ny röstomgång</strong> endast på de inblandade namnen.</li>
+          <li>Fortfarande lika efter det → <strong>slumpen avgör</strong>.</li>
+        </ol>
+      </div>
+
       <div className="lobby-cols">
         <div>
           <h3 className="muted">Spelare ({players.length})</h3>
