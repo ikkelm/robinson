@@ -31,6 +31,30 @@ export const submit = mutation({
     if (!game) throw new Error('Game not found')
     if (game.status !== 'voting') throw new Error('Not accepting votes right now')
 
+    // Player + name must belong to this game
+    const player = await ctx.db.get(playerId)
+    if (!player || player.game_id !== gameId) {
+      throw new Error('Player does not belong to this game')
+    }
+
+    // Compute the legal voting pool for the current round
+    const allNames = await ctx.db
+      .query('names')
+      .withIndex('by_game', (q) => q.eq('game_id', gameId))
+      .collect()
+    const isTiebreak = Boolean(game.tiebreak_name_ids?.length)
+    const legalNameIds = new Set(
+      (isTiebreak
+        ? allNames.filter((n) => game.tiebreak_name_ids!.includes(n._id))
+        : allNames.filter((n) => !n.eliminated)
+      ).map((n) => n._id)
+    )
+    for (const nameId of nameIds) {
+      if (!legalNameIds.has(nameId)) {
+        throw new Error('Vote cast on a name that is not in the current pool')
+      }
+    }
+
     // Prevent double-voting in same round
     const existing = await ctx.db
       .query('votes')

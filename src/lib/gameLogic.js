@@ -95,8 +95,12 @@ export function resolveElimination(candidateNames, votes, eliminateCount, allowR
   }
 
   if (allowRandomFallback) {
-    // Step 3: random.
-    const shuffled = [...stillTied].sort(() => Math.random() - 0.5)
+    // Step 3: random. Use Fisher-Yates for an unbiased shuffle.
+    const shuffled = [...stillTied]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
     const elimRandom = shuffled.slice(0, slotsAfterVoterTiebreak).map((n) => n.id)
     return {
       eliminated: [...definitelyEliminated, ...elimByVoters, ...elimRandom],

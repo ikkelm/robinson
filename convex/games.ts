@@ -95,13 +95,18 @@ export const closeRound = mutation({
       })
     }
 
+    // Accumulate across a tiebreak chain so every elimination gets the
+    // dramatic reveal — even ones that happened in a "skipped" sub-round.
+    const previouslyAccumulated = isTiebreak ? (game.last_eliminated_ids || []) : []
+    const accumulatedEliminations = [...previouslyAccumulated, ...result.eliminated]
+
     if (result.tiebreak && result.tiebreak.length > 0) {
       await ctx.db.patch(gameId, {
         status: 'voting',
         current_round: game.current_round + 1,
         tiebreak_name_ids: result.tiebreak,
         tiebreak_slots: result.tiebreakSlots,
-        last_eliminated_ids: result.eliminated
+        last_eliminated_ids: accumulatedEliminations
       })
       return
     }
@@ -115,7 +120,7 @@ export const closeRound = mutation({
         status: 'finished',
         tiebreak_name_ids: undefined,
         tiebreak_slots: undefined,
-        last_eliminated_ids: result.eliminated,
+        last_eliminated_ids: accumulatedEliminations,
         winner_name_id: allActive[0]?._id
       })
     } else {
@@ -123,7 +128,7 @@ export const closeRound = mutation({
         status: 'result',
         tiebreak_name_ids: undefined,
         tiebreak_slots: undefined,
-        last_eliminated_ids: result.eliminated
+        last_eliminated_ids: accumulatedEliminations
       })
     }
   }
