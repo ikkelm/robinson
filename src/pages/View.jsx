@@ -37,7 +37,7 @@ function LobbyView({ players, names }) {
       <div className="rules-card">
         <h2 className="rules-title">Så funkar det</h2>
         <ol className="rules-list">
-          <li>Varje omgång lägger ni <strong>2 röster</strong> vardera — båda får ligga på samma namn.</li>
+          <li>Varje omgång lägger ni <strong>2 röster</strong> vardera — båda får sättas på samma namn.</li>
           <li>De <strong>2 namnen med lägst</strong> röster åker ut.</li>
           <li>Sista namnet som är kvar <strong>vinner</strong>.</li>
         </ol>
